@@ -8,12 +8,36 @@ router.get('/', (req, res) => {
     res.send(" Let's do some sprint!")
 })
 
+//GET all projects
 router.get('/api/projects', (req, res) => {
     db('projects')
         .then( results => res.json(results))
         .catch(err => res.json(err))
 })
 
+//GET projects by ID
+router.get('/api/projects/:id', (req, res) => {
+    const {id} = req.params
+    db('projects').where({id: id })
+        .first()
+        .then(projects => {
+            db('actions')
+                .where({projects_id: id })
+                .then(actions => {
+                    res.status(200).json(actions)
+                })
+                .catch(err => res.status(500).json(err))
+        })
+})
+
+//PUT actions
+router.put('/api/actions/:id', (req, res) => {
+    db('actions').where({id: req.params.id}).update(req.body)
+        .then(updates => res.status(200).json(updates))
+        .catch(err => res.status(500).json(err))
+})
+
+//GET all actions
 router.get('/api/actions', (req, res) => {
     db('actions')
         .then(actions => res.json(actions))
