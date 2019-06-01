@@ -1,13 +1,13 @@
 const express = require('express');
 const server = (express());
 
+
+const projects_actionsRouter = require('./project-router.js');
+
 server.use(express.json())
 
-const knex = require('knex');
-const dbConfig = require('./knexfile.js')
+server.use('/api/projects', projects_actionsRouter);
 
-server.get('/', (req, res) => {
-    res.send(" Let's do some sprint!")
-})
+
 
 module.exports = server;
