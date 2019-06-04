@@ -16,19 +16,22 @@ router.get('/api/projects', (req, res) => {
 })
 
 //GET projects by ID
-router.get('/api/projects/:id', (req, res) => {
-    const {id} = req.params
-    db('projects').where({id: id })
-        .first()
-        .then(projects => {
-            db('actions')
-                .where({projects_id: id })
-                .then(actions => {
-                    res.status(200).json(actions)
-                })
-                .catch(err => res.status(500).json(err))
-        })
-})
+router.get("/api/projects/:id", async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+      const project = await db('projects').where({id}).first();
+      const actions = await db('actions').where({projects_id: id});
+
+      if (project) {
+        res.status(200).json({ ...project, actions });
+      } else {
+        res.status(404).json({ message: "Error 404: Project could not be found." });
+      }
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  });
 
 //PUT actions
 router.put('/api/actions/:id', (req, res) => {
